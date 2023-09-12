@@ -45,6 +45,7 @@ spec:
     image: "zafoutni/imagechaosw:latest"
     imagePullPolicy: Always
     args:
+    - -c
     - python   
     - script.py
     command:
