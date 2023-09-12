@@ -44,10 +44,11 @@ spec:
         verbs: ["create","list","get","patch","update","delete"]
     image: "zafoutni/imagechaosw:latest"
     imagePullPolicy: Always
-    args:    
+    args:
+    - python   
     - script.py
     command:
-    - python
+    - /bin/bash
     env:
     - name: TOTAL_CHAOS_DURATION
       value: '60'
