@@ -75,32 +75,9 @@ spec:
       value: 'parallel'
 
     # Provide the path of aws credentials mounted from secret  
-    - name: AWS_SHARED_CREDENTIALS_FILE
-      value: '/tmp/cloud_config.yml'      
+     
 
-    # Provide the name of ssm doc 
-    # if not using the default stress docs  
-    - name: DOCUMENT_NAME
-      value: ''
-
-    # Provide the type of ssm doc 
-    # if not using the default stress docs  
-    - name: DOCUMENT_TYPE
-      value: ''
-
-    # Provide the format of ssm doc
-    # if not using the default stress docs  
-    - name: DOCUMENT_FORMAT
-      value: ''
-
-    # Provide the path of ssm doc 
-    # if not using the default stress docs  
-    - name: DOCUMENT_PATH
-      value: ''
-
-    # if you want to install dependencies to run default ssm docs
-    - name: INSTALL_DEPENDENCIES
-      value: 'True'        
+    
 
     # provide the number of workers for memory stress
     - name: NUMBER_OF_WORKERS
@@ -125,6 +102,4 @@ spec:
       app.kubernetes.io/part-of: litmus
       app.kubernetes.io/component: experiment-job
       app.kubernetes.io/version: 3.0.0-beta3
-    secrets:
-    - name: cloud-secret
-      mountPath: /tmp/
+ 
