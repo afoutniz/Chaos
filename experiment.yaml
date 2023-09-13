@@ -1,18 +1,18 @@
 apiVersion: litmuschaos.io/v1alpha1
 description:
   message: |
-    Execute AWS SSM Chaos on given ec2 instance IDs
+    Deletes a pod belonging to a deployment/statefulset/daemonset
 kind: ChaosExperiment
 metadata:
-  name: custom-chaos
+  name:  custom-chaos
   labels:
-    name: custom-chaos
+    name:  custom-chaos
     app.kubernetes.io/part-of: litmus
     app.kubernetes.io/component: chaosexperiment
     app.kubernetes.io/version: 3.0.0-beta3
 spec:
   definition:
-    scope: Cluster
+    scope: Namespaced
     permissions:
       # Create and monitor the experiment & helper pods
       - apiGroups: [""]
@@ -22,9 +22,9 @@ spec:
       - apiGroups: [""]
         resources: ["events"]
         verbs: ["create","get","list","patch","update"]
-      # Fetch configmaps & secrets details and mount it to the experiment pod (if specified)
+      # Fetch configmaps details and mount it to the experiment pod (if specified)
       - apiGroups: [""]
-        resources: ["secrets","configmaps"]
+        resources: ["configmaps"]
         verbs: ["get","list",]
       # Track and get the runner, experiment, and helper pods log 
       - apiGroups: [""]
@@ -34,6 +34,22 @@ spec:
       - apiGroups: [""]
         resources: ["pods/exec"]
         verbs: ["get","list","create"]
+      # deriving the parent/owner details of the pod(if parent is anyof {deployment, statefulset, daemonsets})
+      - apiGroups: ["apps"]
+        resources: ["deployments","statefulsets","replicasets", "daemonsets"]
+        verbs: ["list","get"]
+      # deriving the parent/owner details of the pod(if parent is deploymentConfig)  
+      - apiGroups: ["apps.openshift.io"]
+        resources: ["deploymentconfigs"]
+        verbs: ["list","get"]
+      # deriving the parent/owner details of the pod(if parent is deploymentConfig)
+      - apiGroups: [""]
+        resources: ["replicationcontrollers"]
+        verbs: ["get","list"]
+      # deriving the parent/owner details of the pod(if parent is argo-rollouts)
+      - apiGroups: ["argoproj.io"]
+        resources: ["rollouts"]
+        verbs: ["list","get"]
       # for configuring and monitor the experiment job by the chaos-runner pod
       - apiGroups: ["batch"]
         resources: ["jobs"]
@@ -42,64 +58,46 @@ spec:
       - apiGroups: ["litmuschaos.io"]
         resources: ["chaosengines","chaosexperiments","chaosresults"]
         verbs: ["create","list","get","patch","update","delete"]
-    image: "zafoutni/imagechaosw:latest"
+    image: "litmuschaos/go-runner:3.0.0-beta3"
     imagePullPolicy: Always
     args:
     - -c
-    - python   
-    - script.py
+    - ./experiments -name  custom-chaos
     command:
     - /bin/bash
     env:
-    - name: TOTAL_CHAOS_DURATION
-      value: '60'
 
-    - name: CHAOS_INTERVAL
-      value: '60'
-      
+    - name: TOTAL_CHAOS_DURATION
+      value: '15'
+
     # Period to wait before and after injection of chaos in sec
     - name: RAMP_TIME
       value: ''
 
-    # Instance ID of the target ec2 instance
-    # Multiple IDs can also be provided as comma separated values ex: id1,id2
-    - name: EC2_INSTANCE_ID
+    - name: FORCE
+      value: 'true'
+
+    - name: CHAOS_INTERVAL
+      value: '5'
+
+    ## percentage of total pods to target
+    - name: PODS_AFFECTED_PERC
       value: ''
 
-    - name: REGION
+    - name: TARGET_PODS
       value: ''
 
-    # it defines the sequence of chaos execution for multiple target instances
-    # supported values: serial, parallel
+    # To select pods on specific node(s)
+    - name: NODE_LABEL
+      value: ''
+
+    ## it defines the sequence of chaos execution for multiple target pods
+    ## supported values: serial, parallel
     - name: SEQUENCE
       value: 'parallel'
-
-    # Provide the path of aws credentials mounted from secret  
-     
-
-    
-
-    # provide the number of workers for memory stress
-    - name: NUMBER_OF_WORKERS
-      value: '1'
-
-    # provide the percentage of available memory to stress
-    - name: MEMORY_PERCENTAGE
-      value: '80'
-
-    # provide the CPU chores to be comsumed
-    # 0 will consume all the available cpu cores
-    - name: CPU_CORE
-      value: '0'
-                
-    # provide the LIB
-    # only litmus supported
-    - name: LIB
-      value: 'litmus'  
-          
+      
     labels:
-      name: custom-chaos
+      name:  custom-chaos
       app.kubernetes.io/part-of: litmus
       app.kubernetes.io/component: experiment-job
       app.kubernetes.io/version: 3.0.0-beta3
- 
