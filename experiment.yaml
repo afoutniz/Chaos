@@ -62,9 +62,10 @@ spec:
     imagePullPolicy: Always
     args:
     - -c
-    - ./experiments -name  custom-chaos
+    - python script.py 
     command:
     - /bin/bash
+   
     env:
 
     - name: TOTAL_CHAOS_DURATION
