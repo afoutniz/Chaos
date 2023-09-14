@@ -62,9 +62,9 @@ spec:
     imagePullPolicy: Always
     args:
     - -c
-    - python script.py 
+    - ./script.py 
     command:
-    - /bin/bash
+    - python3
    
     env:
 
