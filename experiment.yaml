@@ -58,7 +58,7 @@ spec:
       - apiGroups: ["litmuschaos.io"]
         resources: ["chaosengines","chaosexperiments","chaosresults"]
         verbs: ["create","list","get","patch","update","delete"]
-    image: "zafoutni/imagechaosw:latest"
+    image: "zafoutni/chaos_custom:1"
     imagePullPolicy: Always
     args:
     - -c
