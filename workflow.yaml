@@ -5,7 +5,7 @@ metadata:
   namespace: litmus
   labels:
     subject: "{{workflow.parameters.adminModeNamespace}}_podtato-main"
-  name: podtato-head-1694596436
+  name: podtato-head-1694522557
 spec:
   entrypoint: argowf-chaos
   serviceAccountName: argo-chaos
@@ -64,7 +64,7 @@ spec:
                   namespace: "{{workflow.parameters.adminModeNamespace}}"
                   labels:
                     workflow_run_id: "{{workflow.uid}}"
-                  generateName: podtato-main-custom-chaos-chaos
+                  generateName: podtato-main-custom-chaos
                 spec:
                   appinfo:
                     appns: "{{workflow.parameters.adminModeNamespace}}"
@@ -124,4 +124,3 @@ spec:
         args:
           - kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n
             {{workflow.parameters.adminModeNamespace}}
-# https://hub.litmuschaos.io/api/chaos/3.0.0-beta3?file=charts/generic/experiments.yaml
