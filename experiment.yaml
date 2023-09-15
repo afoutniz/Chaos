@@ -61,6 +61,7 @@ spec:
     image: "zafoutni/litmus:latest"
     imagePullPolicy: Always
     args: ["--param1", "10", "--param2", "hello"]
+    command: ["python"]
   
    
     env:
