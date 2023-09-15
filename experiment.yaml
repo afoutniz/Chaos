@@ -62,7 +62,7 @@ spec:
     imagePullPolicy: Always
     args:
       - -c
-      - ./litmus/script.py
+      - ./script.py
     command:
       - /bin/bash
     
