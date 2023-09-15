@@ -58,13 +58,10 @@ spec:
       - apiGroups: ["litmuschaos.io"]
         resources: ["chaosengines","chaosexperiments","chaosresults"]
         verbs: ["create","list","get","patch","update","delete"]
-    image: "zafoutni/image:2"
+    image: "zafoutni/litmus:latest"
     imagePullPolicy: Always
-    args:
-    - -c
-    - ./script.py 
-    command:
-    - python3
+    args: ["--param1", "10", "--param2", "hello"]
+  
    
     env:
 
