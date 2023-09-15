@@ -58,12 +58,14 @@ spec:
       - apiGroups: ["litmuschaos.io"]
         resources: ["chaosengines","chaosexperiments","chaosresults"]
         verbs: ["create","list","get","patch","update","delete"]
-    image: "zafoutni/litmus:latest"
+    image: "zafoutni/litmus:1"
     imagePullPolicy: Always
-    args: ["--param1", "10", "--param2", "hello"]
-    command: ["python"]
-  
-   
+    args:
+      - -c
+      - ./script.py
+    command:
+      - /bin/bash
+    
     env:
 
     - name: TOTAL_CHAOS_DURATION
