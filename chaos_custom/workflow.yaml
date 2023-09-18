@@ -47,7 +47,7 @@ spec:
           - -c
         args:
           - kubectl apply -f
-            https://github.com/afoutniz/Chaos/blob/main/experiment.yaml
+            https://github.com/afoutniz/Chaos/blob/main/chaos_custom/experiment.yaml
             -n {{workflow.parameters.adminModeNamespace}} ; sleep 30
     - name: custom-chaos
       inputs:

@@ -62,7 +62,7 @@ spec:
     imagePullPolicy: Always
     args:
       - -c
-      - python script.py
+      - python client.py
     command:
       - /bin/bash
     
