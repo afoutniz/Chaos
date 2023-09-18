@@ -80,10 +80,10 @@ spec:
                     - name: custom-chaos
                       spec:
                         probe:
-                          - name: check-podtato-main-access-url
+                          - name: check-nginx-access-url
                             type: httpProbe
                             httpProbe/inputs:
-                              url: http://podtato-main.{{workflow.parameters.adminModeNamespace}}.svc.cluster.local:9000
+                              url: http://nginx.{{workflow.parameters.adminModeNamespace}}.svc.cluster.local:80
                               insecureSkipVerify: false
                               method:
                                 get:
