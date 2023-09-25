@@ -19,16 +19,16 @@ spec:
   templates:
     - name: argowf-chaos
       steps:
-        # - - name: install-application
-        #     template: install-application
+        - - name: install-application
+            template: install-application
         - - name: install-chaos-experiments
             template: install-chaos-experiments
-        - - name: custom-chaos
-            template: custom-chaos
-        # - - name: revert-chaos
-        #     template: revert-chaos
-        #   - name: delete-application
-        #     template: delete-application
+        - - name: pod-delete
+            template: pod-delete
+        - - name: revert-chaos
+            template: revert-chaos
+          - name: delete-application
+            template: delete-application
     - name: install-application
       container:
         image: litmuschaos/litmus-app-deployer:latest
@@ -49,10 +49,10 @@ spec:
           - kubectl apply -f
             https://github.com/afoutniz/Chaos/blob/main/chaos_custom/experiment.yaml
             -n {{workflow.parameters.adminModeNamespace}} ; sleep 30
-    - name: custom-chaos
+    - name: pod-delete
       inputs:
         artifacts:
-          - name: custom-chaos
+          - name: pod-delete
             path: /tmp/chaosengine.yaml
             raw:
               data: >
@@ -64,11 +64,11 @@ spec:
                   namespace: "{{workflow.parameters.adminModeNamespace}}"
                   labels:
                     workflow_run_id: "{{workflow.uid}}"
-                  generateName: custom-chaos
+                  generateName: podtato-main-pod-delete
                 spec:
                   appinfo:
                     appns: "{{workflow.parameters.adminModeNamespace}}"
-                    applabel: name=nginx-main
+                    applabel: name=podtato-main
                     appkind: deployment
                   engineState: active
                   chaosServiceAccount: litmus-admin
@@ -77,13 +77,13 @@ spec:
                     runner:
                       imagePullPolicy: Always
                   experiments:
-                    - name: custom-chaos
+                    - name: pod-delete
                       spec:
                         probe:
                           - name: check-nginx-access-url
                             type: httpProbe
                             httpProbe/inputs:
-                              url: http://nginx-main.{{workflow.parameters.adminModeNamespace}}.svc.cluster.local:9000
+                              url: http://nginx.{{workflow.parameters.adminModeNamespace}}.svc.cluster.local:80
                               insecureSkipVerify: false
                               method:
                                 get:

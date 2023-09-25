@@ -1,18 +1,18 @@
 apiVersion: litmuschaos.io/v1alpha1
 kind: ChaosEngine
 metadata:
-  name: custom-chaos
-  namespace: litmus
+  name: pod-delete
+  namespace: default
 spec:
   appinfo:
-    appns: 'litmus'
-    applabel: 'app=nginx-man'
+    appns: 'default'
+    applabel: 'app=nginx'
     appkind: 'deployment'
   # It can be active/stop
   engineState: 'active'
   chaosServiceAccount: litmus-admin
   experiments:
-    - name: custom-chaos
+    - name: pod-delete
       spec:
         components:
           env:

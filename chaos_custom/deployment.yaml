@@ -1,18 +1,61 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: nginx-deployment
+#   labels:
+#     app: nginx
+#     name: nginx
+
+#   namespace: litmus
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels:
+#       app: nginx
+#       name: nginx
+#   strategy:
+#     rollingUpdate:
+#       maxSurge: 25%
+#       maxUnavailable: 25%
+#     type: RollingUpdate
+#   template:
+#     metadata:
+#       creationTimestamp: null
+#       labels:
+#         app: nginx
+#         name: nginx
+#     spec:
+#       containers:
+#       - name: nginx
+#         image: nginx:1.14.2
+#         ports:
+#         - containerPort: 80
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
-  labels:
-    app: nginx
-    name: nginx
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"litmuschaos.io/chaos":"true"},"labels":{"app":"nginx-head","name":"nginx-main"},"name":"nginx-main","namespace":"litmus"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"nginx-head","name":"nginx-main"}},"template":{"metadata":{"labels":{"app":"nginx-head","name":"nginx-main"}},"spec":{"containers":[{"env":[{"name":"PORT","value":"9000"}],"image":"gdsoumya/nginx-main-js:v0.1.0","imagePullPolicy":"Always","name":"server","ports":[{"containerPort":9000}],"readinessProbe":{"httpGet":{"path":"/","port":9000},"initialDelaySeconds":10,"periodSeconds":3}}],"terminationGracePeriodSeconds":5}}}}
+    litmuschaos.io/chaos: "true"
 
+  generation: 1
+  labels:
+    app: nginx-head
+    name: nginx-main
+  name: nginx-main
   namespace: litmus
+  resourceVersion: "20088"
+
 spec:
+  progressDeadlineSeconds: 600
   replicas: 3
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: nginx
-      name: nginx
+      app: nginx-head
+      name: nginx-main
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -22,11 +65,34 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        app: nginx
-        name: nginx
+        app: nginx-head
+        name: nginx-main
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.14.2
+      - env:
+        - name: PORT
+          value: "9000"
+        image: nginx:latest
+        imagePullPolicy: Always
+        name: server
         ports:
-        - containerPort: 80
+        - containerPort: 9000
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 9000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 3
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 5
